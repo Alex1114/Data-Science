@@ -89,7 +89,7 @@ def push(start,end):
                         push_dict[userid] = {"like": 1, "boo": 0}
                         
                 
-                elif re.search("噓 ",str(push_info)):
+                if re.search("噓 ",str(push_info)):
                     boo += 1
                     if userid in push_dict:
                         push_dict[userid]["boo"] +=1
