@@ -11,7 +11,7 @@ from multiprocessing import Pool
 def crawl(url):
     all_data = open("all_articles.txt", "wb+")
     popular_data = open("all_popular.txt", "wb+")
-    start_time = time.time()
+   #start_time = time.time()
     num_page = 435
 
     while(num_page > 0):
