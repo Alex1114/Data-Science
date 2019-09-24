@@ -67,7 +67,7 @@ def push(start,end):
         data_select = data_search.split(',')
         day = int(data_select[0])
         #title = str(data_select[1])
-        url = str(data_select[2]).rstrip()
+        url = str(data_select[-1]).rstrip()
 
         if day > end:
             break
