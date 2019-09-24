@@ -78,8 +78,9 @@ def push(start,end):
             
             for push in class_push:
                 push_info = push.find_all("span")
-                #tag = push_info[0].string
-                userid = push_info[1].string
+                if len(push_info) != 0:    
+                    #tag = push_info[0].string
+                    userid = push_info[1].string
                 
                 if re.search("推 ",str(push_info)):
                     like += 1
