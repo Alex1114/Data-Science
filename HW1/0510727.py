@@ -53,7 +53,6 @@ def crawl(url):
 
 
 def push(start,end):
-    time.sleep(0.05)
     starttime = datetime.datetime.now()
     like = 0
     boo = 0
@@ -72,6 +71,7 @@ def push(start,end):
         if day > end:
             break
         if day >= start:
+            time.sleep(0.05)
             response = requests.get(url, cookies={"over18": "1"})
             soup = BeautifulSoup(response.text, "html.parser")
             class_push = soup.find_all(class_="push")
@@ -112,10 +112,49 @@ def push(start,end):
         temp = "boo #%d: %s %d\n" % ((i+1), j, push_dict[j]["boo"])
         #print(temp.rstrip())
         finish_2.append(temp)
-
+    print(finish_2)
     finish_2 = "".join(finish_2)+"\n"
     push_data.write((finish_2).encode('utf-8'))
     push_data.close()
+    endtime = datetime.datetime.now()
+    print ("Spend Time: ", endtime - starttime)
+
+
+
+def popular(start,end):
+    starttime = datetime.datetime.now()
+    popular_number = 0
+    all_data = open('all_popular.txt', 'r')
+    popular_data = open("popular[%d-%d].txt" %(start, end), "wb+")
+    data = all_data.readlines()
+    all_data.close()
+    finish_3 = []
+    
+    for data_search in data: 
+        data_select = data_search.split(',')
+        day = int(data_select[0])
+        url = str(data_select[-1]).rstrip()
+
+        if day > end:
+            break
+        if day >= start:
+            popular_number +=1
+            
+            time.sleep(0.05)
+            response = requests.get(url, cookies={"over18": "1"})
+            soup = BeautifulSoup(response.text, "html.parser")
+            condition = 'href="(http|https)(.*)?(jpg|jpeg|png|gif)'
+            img_url = []
+            temp = []
+            img_url = re.findall(condition, soup.prettify())
+            for string in img_url:
+                temp.append("".join(string)+"\n")
+
+    finish_3.append("number of popular articles: %d\n" %popular_number )  
+    finish_3.append("".join(temp)+"\n")           
+    finish_3 = "".join(finish_3)+"\n"
+    popular_data.write((finish_3).encode('utf-8'))
+    popular_data.close()       
     endtime = datetime.datetime.now()
     print ("Spend Time: ", endtime - starttime)
 
@@ -177,15 +216,15 @@ if __name__ == "__main__":
         crawl(url)
 
     elif args.mod[0]=="push":
-        print('crawl push and boo from', int(args.mod[1]), 'to', int(args.mod[2]))
+        print("crawl push and boo from", int(args.mod[1]), "to", int(args.mod[2]))
         push(int(args.mod[1]),int(args.mod[2]))
     
-    elif args.mod[0]=='popular': 
-        print('popular from', int(args.mod[1]), 'to', int(args.mod[2]))
-        
+    elif args.mod[0]=="popular": 
+        print("crawl popular from", int(args.mod[1]), "to", int(args.mod[2]))
+        popular(int(args.mod[1]),int(args.mod[2]))
     
-    elif args.mod[0]=='keyword':
-        print('search',args.cmd[1], 'from', int(args.cmd[2]), 'to', int(args.cmd[3]))
+#    elif args.mod[0]=='keyword':
+#        print('search',args.cmd[1], 'from', int(args.cmd[2]), 'to', int(args.cmd[3]))
        
 
 
