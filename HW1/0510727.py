@@ -115,7 +115,6 @@ def push(start,end):
         temp = "boo #%d: %s %d\n" % ((i+1), j, push_dict[j]["boo"])
         #print(temp.rstrip())
         finish_2.append(temp)
-    print(finish_2)
     finish_2 = "".join(finish_2)+"\n"
     push_data.write((finish_2).encode('utf-8'))
     push_data.close()
