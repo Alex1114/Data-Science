@@ -31,7 +31,10 @@ def crawl(url):
                 continue
 
             link = ent.find("a")
-            url_info = "https://www.ptt.cc" + link.get("href")
+            if link:
+                url_info = "https://www.ptt.cc" + link.get("href")
+            else:
+                continue
             title = list(link.strings)
             finish_1 = str(day)+","+"".join(title)+","+url_info+"\n"
             print(finish_1.rstrip())
@@ -143,7 +146,9 @@ def popular(start,end):
             popular_number +=1
             
             time.sleep(0.05)
-            response = requests.get(url, cookies={"over18": "1"})
+            try:
+                response = requests.get(url, cookies={"over18": "1"})
+            except Exception as e: print(e)
             soup = BeautifulSoup(response.text, "html.parser")
             condition = 'href="(http|https)(.*)?(jpg|jpeg|png|gif)'
             img_url = re.findall(condition, soup.prettify())
@@ -200,7 +205,7 @@ def keyword(key,start,end):
                             break
             else:
                 print("no 發信站",url)
-                return
+                continue
      
     finish_4.append("".join(temp)+"\n")           
     finish_4 = "".join(finish_4)+"\n"
@@ -210,7 +215,7 @@ def keyword(key,start,end):
     print ("Spend Time: ", endtime - starttime)
             
 
-            
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
