@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import requests
 import re
 from bs4 import BeautifulSoup
@@ -168,6 +168,7 @@ def keyword(key,start,end):
     data = all_data.readlines()
     all_data.close()
     finish_4 = []
+    temp = []
 
     for data_search in data: 
         data_select = data_search.split(',')
@@ -179,43 +180,37 @@ def keyword(key,start,end):
             time.sleep(0.05)
             response = requests.get(url, cookies={"over18": "1"})
             soup = BeautifulSoup(response.text, "html.parser")
-                            
-
- '''    
-condition = 'href="(http|https)(.*)?(jpg|jpeg|png|gif)'
-            img_url = re.findall(condition, soup.prettify())
-            for string in img_url:
-                temp.append("".join(string)+"\n")
-
-    finish_3.append("number of popular articles: %d\n" %popular_number )  
-    finish_3.append("".join(temp)+"\n")           
-    finish_3 = "".join(finish_3)+"\n"
-    popular_data.write((finish_3).encode('utf-8'))
-    popular_data.close()       
+            content = soup.find(class_="bbs-screen bbs-content").text
+            
+            stop = "※ 發信站"
+            check = re.search(stop, content)
+            if check:
+                content_list = content.split('\n')
+                
+                for match in content_list:
+                    if re.search(stop, match):                      
+                        break
+                    else:
+                        if re.search(key,match):
+                            print("Get!",url)
+                            condition = 'href="(http|https)(.*)?(jpg|jpeg|png|gif)'
+                            img_url = re.findall(condition, soup.prettify())
+                            for string in img_url:
+                                temp.append("".join(string)+"\n")
+                            break
+            else:
+                print("no 發信站",url)
+                return
+     
+    finish_4.append("".join(temp)+"\n")           
+    finish_4 = "".join(finish_4)+"\n"
+    keyword_data.write((finish_4).encode('utf-8'))
+    keyword_data.close()       
     endtime = datetime.datetime.now()
     print ("Spend Time: ", endtime - starttime)
-
-'''
-
-
-
-
-
-
-
-
-
-
-
-
-
-             
-                
-                
-                
             
 
-
+            
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -236,7 +231,5 @@ if __name__ == "__main__":
         popular(int(args.mod[1]),int(args.mod[2]))
     
     elif args.mod[0]=="keyword":
-        print("search",args.mod[1], "from", int(args.mod[2]), "to", int(args.mod[3]))
-       
-
-
+        print("crawl and search",args.mod[1], "from", int(args.mod[2]), "to", int(args.mod[3]))
+        keyword(str(args.mod[1]),int(args.mod[2]),int(args.mod[3]))
