@@ -129,6 +129,8 @@ def popular(start,end):
     data = all_data.readlines()
     all_data.close()
     finish_3 = []
+    img_url = []
+    temp = []
     
     for data_search in data: 
         data_select = data_search.split(',')
@@ -144,8 +146,6 @@ def popular(start,end):
             response = requests.get(url, cookies={"over18": "1"})
             soup = BeautifulSoup(response.text, "html.parser")
             condition = 'href="(http|https)(.*)?(jpg|jpeg|png|gif)'
-            img_url = []
-            temp = []
             img_url = re.findall(condition, soup.prettify())
             for string in img_url:
                 temp.append("".join(string)+"\n")
