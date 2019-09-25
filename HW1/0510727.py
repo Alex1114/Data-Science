@@ -161,6 +161,41 @@ def popular(start,end):
 
 
 
+def keyword(key,start,end):
+    starttime = datetime.datetime.now()
+    all_data = open('all_articles.txt', 'r')
+    keyword_data = open("keyword(%s)[%d-%d].txt" %(key, start, end), "wb+")
+    data = all_data.readlines()
+    all_data.close()
+    finish_4 = []
+
+    for data_search in data: 
+        data_select = data_search.split(',')
+        day = int(data_select[0])
+        url = str(data_select[-1]).rstrip()
+        if day > end:
+            break
+        if day >= start:
+            time.sleep(0.05)
+            response = requests.get(url, cookies={"over18": "1"})
+            soup = BeautifulSoup(response.text, "html.parser")
+                            
+
+ '''    
+condition = 'href="(http|https)(.*)?(jpg|jpeg|png|gif)'
+            img_url = re.findall(condition, soup.prettify())
+            for string in img_url:
+                temp.append("".join(string)+"\n")
+
+    finish_3.append("number of popular articles: %d\n" %popular_number )  
+    finish_3.append("".join(temp)+"\n")           
+    finish_3 = "".join(finish_3)+"\n"
+    popular_data.write((finish_3).encode('utf-8'))
+    popular_data.close()       
+    endtime = datetime.datetime.now()
+    print ("Spend Time: ", endtime - starttime)
+
+'''
 
 
 
@@ -172,36 +207,13 @@ def popular(start,end):
 
 
 
-       
-    
+
+
+             
                 
                 
                 
-                
-                
-                
-     
-
-
-
-
-
-
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            
 
 
 
@@ -223,8 +235,8 @@ if __name__ == "__main__":
         print("crawl popular from", int(args.mod[1]), "to", int(args.mod[2]))
         popular(int(args.mod[1]),int(args.mod[2]))
     
-#    elif args.mod[0]=='keyword':
-#        print('search',args.cmd[1], 'from', int(args.cmd[2]), 'to', int(args.cmd[3]))
+    elif args.mod[0]=="keyword":
+        print("search",args.mod[1], "from", int(args.mod[2]), "to", int(args.mod[3]))
        
 
 
