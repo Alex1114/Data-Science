@@ -10,10 +10,10 @@ import datetime
 from multiprocessing import Pool
 
 def crawl(url):
-    all_data = open("all_articles.txt", "wb+")
+    all_data = open("all_articles.txt", "wb+")          
     popular_data = open("all_popular.txt", "wb+")
-    starttime = datetime.datetime.now()
-    num_page = 435
+    starttime = datetime.datetime.now()         #執行時間起點
+    num_page = 435          #2018年頁數      
 
     while(num_page > 0):
         response = requests.get(url, cookies={"over18": "1"})
@@ -22,8 +22,8 @@ def crawl(url):
         r_ent = soup.find_all(class_="r-ent")
         
         for ent in r_ent:
-            date = ent.find_all(class_='date')
-            day_str = date[0].string.split('/')
+            date = ent.find_all(class_="date")
+            day_str = date[0].string.split("/")
             day = int(day_str[0] + day_str[1])
             if url == "https://www.ptt.cc/bbs/Beauty/index2324.html" and int(day_str[0])==12 :
                 continue
@@ -47,7 +47,7 @@ def crawl(url):
                 popular_data.write((finish_1).encode('utf-8'))
                           
         url = "https://www.ptt.cc" + \
-            soup.find_all(class_='btn wide')[2].get('href')
+            soup.find_all(class_="btn wide")[2].get("href")
         num_page = num_page-1
     all_data.close()
     popular_data.close()
@@ -60,13 +60,13 @@ def push(start,end):
     like = 0
     boo = 0
     push_dict = {}
-    all_data = open('all_articles.txt', 'r')
+    all_data = open("all_articles.txt", "r")
     push_data = open("push[%d-%d].txt" %(start, end), "wb+")
     data = all_data.readlines()
     all_data.close()
     
     for data_search in data: 
-        data_select = data_search.split(',')
+        data_select = data_search.split(",")
         day = int(data_select[0])
         #title = str(data_select[1])
         url = str(data_select[-1]).rstrip()
@@ -78,27 +78,34 @@ def push(start,end):
             response = requests.get(url, cookies={"over18": "1"})
             soup = BeautifulSoup(response.text, "html.parser")
             class_push = soup.find_all(class_="push")
+            content = soup.find(class_="bbs-screen bbs-content").text
+            stop = "※ 發信站"
+            check = re.search(stop, content)
             
-            for push in class_push:
-                push_info = push.find_all("span")
-                if len(push_info) != 0:    
-                    #tag = push_info[0].string
-                    userid = push_info[1].string
+            if check:
+                for push in class_push:
+                    push_info = push.find_all("span")
+                    if len(push_info) != 0:    
+                        #tag = push_info[0].string
+                        userid = push_info[1].string
                 
-                if re.search("推 ",str(push_info)):
-                    like += 1
-                    if userid in push_dict:
-                        push_dict[userid]["like"] +=1
-                    else:
-                        push_dict[userid] = {"like": 1, "boo": 0}
+                    if re.search("推 ",str(push_info)):
+                        like += 1
+                        if userid in push_dict:
+                            push_dict[userid]["like"] +=1
+                        else:
+                            push_dict[userid] = {"like": 1, "boo": 0}
                         
                 
-                if re.search("噓 ",str(push_info)):
-                    boo += 1
-                    if userid in push_dict:
-                        push_dict[userid]["boo"] +=1
-                    else:
-                        push_dict[userid] = {"like": 0, "boo": 1}
+                    if re.search("噓 ",str(push_info)):
+                        boo += 1
+                        if userid in push_dict:
+                            push_dict[userid]["boo"] +=1
+                        else:
+                            push_dict[userid] = {"like": 0, "boo": 1}
+            else:
+                print("no 發信站",url)
+                continue
         
     finish_2 = []
     finish_2.append("all like: %d\n" %like )
@@ -149,10 +156,19 @@ def popular(start,end):
                 response = requests.get(url, cookies={"over18": "1"})
             except Exception as e: print(e)
             soup = BeautifulSoup(response.text, "html.parser")
-            condition = 'href="(http|https)(.*)?(jpg|jpeg|png|gif)'
-            img_url = re.findall(condition, soup.prettify())
-            for string in img_url:
-                temp.append("".join(string)+"\n")
+            content = soup.find(class_="bbs-screen bbs-content").text
+            stop = "※ 發信站"
+            check = re.search(stop, content)
+            
+            if check:
+                condition = 'href="(http|https)(.*)?(jpg|jpeg|png|gif)'
+                img_url = re.findall(condition, soup.prettify())
+                for string in img_url:
+                    temp.append("".join(string)+"\n")
+
+            else:
+                print("no 發信站",url)
+                continue
 
     finish_3.append("number of popular articles: %d\n" %popular_number )  
     finish_3.append("".join(temp)+"\n")           
