@@ -38,7 +38,7 @@ def crawl(url):
             title = list(link.strings)
             finish_1 = str(day)+","+"".join(title)+","+url_info+"\n"
             print(finish_1.rstrip())
-            if re.search("[公告]",finish_1):
+            if re.search("公告",finish_1):
                 continue
             all_data.write(finish_1.encode("utf-8"))
 
