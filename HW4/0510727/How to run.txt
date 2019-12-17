@@ -1,0 +1,9 @@
+進入0510727資料夾後執行以下指令即可
+Dataset存放在 ./utils/glue_data/SST-2
+
+Training:
+    python3 ./examples/run_glue.py --model_type bert --model_name_or_path bert-base-uncased --task_name SST-2 --do_train --do_lower_case --data_dir ./utils/glue_data/SST-2 --per_gpu_train_batch_size=20 --learning_rate 2e-5 --num_train_epochs 5.0 --output_dir ./model
+
+
+Training:
+    python3 ./examples/run_glue_test.py --model_type bert --model_name_or_path bert-base-uncased --task_name SST-2 --do_eval --do_lower_case --data_dir ./utils/glue_data/SST-2 --per_gpu_eval_batch_size=1 --output_dir ./model
